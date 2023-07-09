@@ -1,7 +1,27 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>vn.vatisteve.utils</groupId>
-  <artifactId>image-util</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>image-util</name>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+      xmlns="http://maven.apache.org/POM/4.0.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>vn.vatisteve.utils</groupId>
+    <artifactId>image-util</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>image-util</name>
+
+    <properties>
+        <marvin.version>1.5.5</marvin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.downgoon</groupId>
+            <artifactId>marvin</artifactId>
+            <version>${marvin.version}</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+
 </project>
