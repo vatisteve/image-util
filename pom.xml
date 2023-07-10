@@ -12,15 +12,23 @@
     <name>image-util</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- Marvin Framework -->
         <marvin.version>1.5.5</marvin.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.github.downgoon</groupId>
-            <artifactId>marvin</artifactId>
+            <artifactId>MarvinFramework</artifactId>
             <version>${marvin.version}</version>
-            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.github.downgoon</groupId>
+            <artifactId>MarvinPlugins</artifactId>
+            <version>${marvin.version}</version>
         </dependency>
     </dependencies>
 
