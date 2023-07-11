@@ -1,5 +1,7 @@
 package io.github.vatisteve.utils.image.impl;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,7 +47,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     private MarvinImage doResize(int width, int height) {
-        MarvinImage imgOut = marvinImage.clone(); // ...
+        MarvinImage imgOut = new MarvinImage(); // ...
         MarvinPluginCollection.scale(marvinImage, imgOut, width, height);
         return imgOut;
     }
@@ -105,7 +107,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
         if (iHeight <= height && iWidth <= width) {
             return marvinImage;
         }
-        if ((iHeight - height) <= (iWidth - width)) {
+        if ((iHeight - height) >= (iWidth - width)) {
             return doScaleByHeight(height);
         } else {
             return doScaleByWidth(width);
@@ -118,10 +120,19 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
+    public InputStream scaleDownWithBackground(FrameProperties frame, Color bgColor) throws IOException {
+        return scaleDownWithBackground(frame.getWidth(), frame.getHeight(), bgColor);
+    }
+
+    @Override
     public InputStream scaleDownWithBackground(int width, int height) throws IOException {
+        return scaleDownWithBackground(width, height, Color.WHITE);
+    }
+
+    @Override
+    public InputStream scaleDownWithBackground(int width, int height, Color bgColor) throws IOException {
         MarvinImage imgOut = doScaleDown(width, height);
-        // TODO add background
-        return toInputStream(imgOut);
+        return toInputStream(withBackground(imgOut.getBufferedImageNoAlpha(), width, height, bgColor));
     }
 
     @Override
@@ -140,7 +151,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
         if (iHeight >= height && iWidth >= width) {
             return marvinImage;
         }
-        if ((iHeight - height) >= (iWidth - width)) {
+        if ((iHeight - height) <= (iWidth - width)) {
             return doScaleByHeight(height);
         } else {
             return doScaleByWidth(width);
@@ -155,18 +166,44 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     @Override
     public InputStream scaleUpAndCrop(int width, int height) throws IOException {
         MarvinImage imgOut = doScaleUp(width, height);
-        // TODO center crop
+        if (imgOut.getWidth() > width || imgOut.getHeight() > height) {
+            MarvinImage cropped = new MarvinImage(/* width, height */);
+            MarvinPluginCollection.crop(imgOut, cropped,
+                    (imgOut.getWidth() - width)/2, (imgOut.getHeight() - height)/2,
+                    width, height);
+            return toInputStream(cropped);
+        }
         return toInputStream(imgOut);
     }
 
     private InputStream toInputStream(MarvinImage image) throws IOException {
-        String mimeType = image.getFormatName().toUpperCase();
+        return toInputStream(image.getBufferedImageNoAlpha());
+    }
+
+    private InputStream toInputStream(BufferedImage image) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if(mimeType.equals("JPEG") || mimeType.equals("JPG") ){
-            ImageIO.write(marvinImage.getBufferedImageNoAlpha(),  mimeType, outputStream);
-        } else{
-            ImageIO.write(marvinImage.getBufferedImage(),  mimeType , outputStream);
-        }
+        ImageIO.write(image, marvinImage.getFormatName(), outputStream);
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
+
+    private BufferedImage withBackground(BufferedImage imageIn, int width, int height, Color backgroundColor) {
+        if (imageIn.getWidth() >= width && imageIn.getHeight() >= height) {
+            return imageIn;
+        }
+        BufferedImage imageOut = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = imageOut.createGraphics();
+        graphics.setColor(backgroundColor);
+        graphics.fillRect(0, 0, width, height);
+        int x = (width - imageIn.getWidth())/2;
+        int y = (height - imageIn.getHeight())/2;
+        graphics.drawImage(imageIn, x, y, null);
+        graphics.dispose();
+        return imageOut;
+    }
+
+    @Override
+    public void close() throws Exception {
+        // ...
+    }
+
 }

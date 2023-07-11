@@ -1,5 +1,6 @@
 package io.github.vatisteve.utils.image;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -11,7 +12,7 @@ import java.io.InputStream;
  * 
  * <p>      Image transformations
  */
-public interface ImageTransformer {
+public interface ImageTransformer extends AutoCloseable {
 
     InputStream resize(FrameProperties size) throws IOException;
 
@@ -33,7 +34,11 @@ public interface ImageTransformer {
 
     InputStream scaleDownWithBackground(FrameProperties frame) throws IOException;
 
+    InputStream scaleDownWithBackground(FrameProperties frame, Color bgColor) throws IOException;
+
     InputStream scaleDownWithBackground(int width, int height) throws IOException;
+
+    InputStream scaleDownWithBackground(int width, int height, Color bgColor) throws IOException;
 
     InputStream scaleUp(FrameProperties frame) throws IOException;
 
