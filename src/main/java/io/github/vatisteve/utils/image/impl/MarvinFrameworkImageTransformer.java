@@ -3,7 +3,6 @@ package io.github.vatisteve.utils.image.impl;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,12 +36,12 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public InputStream resize(FrameProperties size) throws IOException {
+    public ByteArrayOutputStream resize(FrameProperties size) throws IOException {
         return resize(size.getWidth(), size.getHeight());
     }
 
     @Override
-    public InputStream resize(int width, int height) throws IOException {
+    public ByteArrayOutputStream resize(int width, int height) throws IOException {
         return toInputStream(doResize(width, height));
     }
 
@@ -53,19 +52,19 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public InputStream scale(double scale) throws IOException {
+    public ByteArrayOutputStream scale(double scale) throws IOException {
         int newWidth = (int) Math.round(scale*marvinImage.getWidth());
         int newHeight = (int) Math.round(scale*marvinImage.getHeight());
         return resize(newWidth, newHeight);
     }
 
     @Override
-    public InputStream scaleByWidth(FrameProperties size) throws IOException {
+    public ByteArrayOutputStream scaleByWidth(FrameProperties size) throws IOException {
         return scaleByWidth(size.getWidth());
     }
 
     @Override
-    public InputStream scaleByWidth(int width) throws IOException {
+    public ByteArrayOutputStream scaleByWidth(int width) throws IOException {
         return toInputStream(doScaleByWidth(width));
     }
 
@@ -76,12 +75,12 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public InputStream scaleByHeight(FrameProperties size) throws IOException {
+    public ByteArrayOutputStream scaleByHeight(FrameProperties size) throws IOException {
         return scaleByHeight(size.getHeight());
     }
 
     @Override
-    public InputStream scaleByHeight(int height) throws IOException {
+    public ByteArrayOutputStream scaleByHeight(int height) throws IOException {
         return toInputStream(doScaleByHeight(height));
     }
 
@@ -92,12 +91,12 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public InputStream scaleDown(FrameProperties size) throws IOException {
+    public ByteArrayOutputStream scaleDown(FrameProperties size) throws IOException {
         return scaleDown(size.getWidth(), size.getHeight());
     }
 
     @Override
-    public InputStream scaleDown(int width, int height) throws IOException {
+    public ByteArrayOutputStream scaleDown(int width, int height) throws IOException {
         return toInputStream(doScaleDown(width, height));
     }
 
@@ -115,33 +114,33 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public InputStream scaleDownWithBackground(FrameProperties frame) throws IOException {
+    public ByteArrayOutputStream scaleDownWithBackground(FrameProperties frame) throws IOException {
         return scaleDownWithBackground(frame.getWidth(), frame.getHeight());
     }
 
     @Override
-    public InputStream scaleDownWithBackground(FrameProperties frame, Color bgColor) throws IOException {
+    public ByteArrayOutputStream scaleDownWithBackground(FrameProperties frame, Color bgColor) throws IOException {
         return scaleDownWithBackground(frame.getWidth(), frame.getHeight(), bgColor);
     }
 
     @Override
-    public InputStream scaleDownWithBackground(int width, int height) throws IOException {
+    public ByteArrayOutputStream scaleDownWithBackground(int width, int height) throws IOException {
         return scaleDownWithBackground(width, height, Color.WHITE);
     }
 
     @Override
-    public InputStream scaleDownWithBackground(int width, int height, Color bgColor) throws IOException {
+    public ByteArrayOutputStream scaleDownWithBackground(int width, int height, Color bgColor) throws IOException {
         MarvinImage imgOut = doScaleDown(width, height);
-        return toInputStream(withBackground(imgOut.getBufferedImageNoAlpha(), width, height, bgColor));
+        return toByteArrayOutputStream(withBackground(imgOut.getBufferedImageNoAlpha(), width, height, bgColor));
     }
 
     @Override
-    public InputStream scaleUp(FrameProperties frame) throws IOException {
+    public ByteArrayOutputStream scaleUp(FrameProperties frame) throws IOException {
         return scaleUp(frame.getWidth(), frame.getHeight());
     }
 
     @Override
-    public InputStream scaleUp(int width, int height) throws IOException {
+    public ByteArrayOutputStream scaleUp(int width, int height) throws IOException {
         return toInputStream(doScaleUp(width, height));
     }
 
@@ -159,12 +158,12 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public InputStream scaleUpAndCrop(FrameProperties frame) throws IOException {
+    public ByteArrayOutputStream scaleUpAndCrop(FrameProperties frame) throws IOException {
         return scaleUpAndCrop(frame.getWidth(), frame.getHeight());
     }
 
     @Override
-    public InputStream scaleUpAndCrop(int width, int height) throws IOException {
+    public ByteArrayOutputStream scaleUpAndCrop(int width, int height) throws IOException {
         MarvinImage imgOut = doScaleUp(width, height);
         if (imgOut.getWidth() > width || imgOut.getHeight() > height) {
             MarvinImage cropped = new MarvinImage(/* width, height */);
@@ -176,14 +175,14 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
         return toInputStream(imgOut);
     }
 
-    private InputStream toInputStream(MarvinImage image) throws IOException {
-        return toInputStream(image.getBufferedImageNoAlpha());
+    private ByteArrayOutputStream toInputStream(MarvinImage image) throws IOException {
+        return toByteArrayOutputStream(image.getBufferedImageNoAlpha());
     }
 
-    private InputStream toInputStream(BufferedImage image) throws IOException {
+    private ByteArrayOutputStream toByteArrayOutputStream(BufferedImage image) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(image, marvinImage.getFormatName(), outputStream);
-        return new ByteArrayInputStream(outputStream.toByteArray());
+        return outputStream;
     }
 
     private BufferedImage withBackground(BufferedImage imageIn, int width, int height, Color backgroundColor) {
