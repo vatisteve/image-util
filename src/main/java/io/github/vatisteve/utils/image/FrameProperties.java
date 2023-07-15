@@ -4,5 +4,6 @@ public interface FrameProperties {
 
     int getWidth();
     int getHeight();
+    DimensionType getDimensionType();
 
 }

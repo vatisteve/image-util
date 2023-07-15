@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import io.github.vatisteve.utils.image.DimensionType;
 import io.github.vatisteve.utils.image.FrameProperties;
 import io.github.vatisteve.utils.image.ImageTransformer;
 import io.github.vatisteve.utils.image.MimeTypeNotSupportedException;
@@ -36,8 +37,9 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public ByteArrayOutputStream resize(FrameProperties size) throws IOException {
-        return resize(size.getWidth(), size.getHeight());
+    public ByteArrayOutputStream resize(FrameProperties frame) throws IOException {
+        if (isRatioFrame(frame)) return toInputStream(marvinImage);
+        return resize(frame.getWidth(), frame.getHeight());
     }
 
     @Override
@@ -59,8 +61,9 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public ByteArrayOutputStream scaleByWidth(FrameProperties size) throws IOException {
-        return scaleByWidth(size.getWidth());
+    public ByteArrayOutputStream scaleByWidth(FrameProperties frame) throws IOException {
+        if (isRatioFrame(frame)) return toInputStream(marvinImage);
+        return scaleByWidth(frame.getWidth());
     }
 
     @Override
@@ -75,8 +78,9 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public ByteArrayOutputStream scaleByHeight(FrameProperties size) throws IOException {
-        return scaleByHeight(size.getHeight());
+    public ByteArrayOutputStream scaleByHeight(FrameProperties frame) throws IOException {
+        if (isRatioFrame(frame)) return toInputStream(marvinImage);
+        return scaleByHeight(frame.getHeight());
     }
 
     @Override
@@ -91,8 +95,9 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public ByteArrayOutputStream scaleDown(FrameProperties size) throws IOException {
-        return scaleDown(size.getWidth(), size.getHeight());
+    public ByteArrayOutputStream scaleDown(FrameProperties frame) throws IOException {
+        frame = detectScaleDownFrame(frame);
+        return scaleDown(frame.getWidth(), frame.getHeight());
     }
 
     @Override
@@ -115,12 +120,14 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleDownWithBackground(FrameProperties frame) throws IOException {
-        return scaleDownWithBackground(frame.getWidth(), frame.getHeight());
+        FrameProperties newFrame = detectScaleDownFrame(frame);
+        return scaleDownWithBackground(newFrame.getWidth(), newFrame.getHeight());
     }
 
     @Override
     public ByteArrayOutputStream scaleDownWithBackground(FrameProperties frame, Color bgColor) throws IOException {
-        return scaleDownWithBackground(frame.getWidth(), frame.getHeight(), bgColor);
+        FrameProperties newFrame = detectScaleDownFrame(frame);
+        return scaleDownWithBackground(newFrame.getWidth(), newFrame.getHeight(), bgColor);
     }
 
     @Override
@@ -136,7 +143,8 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleUp(FrameProperties frame) throws IOException {
-        return scaleUp(frame.getWidth(), frame.getHeight());
+        FrameProperties newFrame = detectScaleUpFrame(frame);
+        return scaleUp(newFrame.getWidth(), newFrame.getHeight());
     }
 
     @Override
@@ -159,7 +167,8 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleUpAndCrop(FrameProperties frame) throws IOException {
-        return scaleUpAndCrop(frame.getWidth(), frame.getHeight());
+        FrameProperties newFrame = detectScaleUpFrame(frame);
+        return scaleUpAndCrop(newFrame.getWidth(), newFrame.getHeight());
     }
 
     @Override
@@ -198,6 +207,88 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
         graphics.drawImage(imageIn, x, y, null);
         graphics.dispose();
         return imageOut;
+    }
+
+    /**
+     * @param   frame the frame
+     * @return  the smaller frame
+     */
+    private FrameProperties detectScaleUpFrame(FrameProperties frame) {
+        if (!frame.getDimensionType().equals(DimensionType.RATIO)) return frame;
+        int rWidth = frame.getWidth();
+        int rHeight = frame.getHeight();
+        int iWidth = marvinImage.getWidth();
+        int iHeight = marvinImage.getHeight();
+        int width = 0;
+        int height = 0;
+        if (rWidth == rHeight) {
+            width = height = iWidth >= iHeight ? iHeight : iWidth;
+        } else if (rWidth < rHeight) {
+            height = iHeight;
+            width = iHeight*rWidth/rHeight;
+        } else {
+            width = iWidth;
+            height = iWidth*rHeight/rWidth;
+        }
+        final int w = width;
+        final int h = height;
+        return new FrameProperties() {
+            @Override
+            public int getWidth() {
+                return w;
+            }
+            @Override
+            public int getHeight() {
+                return h;
+            }
+            @Override
+            public DimensionType getDimensionType() {
+                return null;
+            }
+        };
+    }
+
+    /**
+     * @param   frame the frame
+     * @return  the bigger frame
+     */
+    private FrameProperties detectScaleDownFrame(FrameProperties frame) {
+        if (!frame.getDimensionType().equals(DimensionType.RATIO)) return frame;
+        int rWidth = frame.getWidth();
+        int rHeight = frame.getHeight();
+        int iWidth = marvinImage.getWidth();
+        int iHeight = marvinImage.getHeight();
+        int width = 0;
+        int height = 0;
+        if (rWidth == rHeight) {
+            width = height = iWidth >= iHeight ? iWidth : iHeight;
+        } else if (rWidth < rHeight) {
+            width = iWidth;
+            height = iWidth*rHeight/rWidth;
+        } else {
+            height = iHeight;
+            width = iHeight*rWidth/rHeight;
+        }
+        final int w = width;
+        final int h = height;
+        return new FrameProperties() {
+            @Override
+            public int getWidth() {
+                return w;
+            }
+            @Override
+            public int getHeight() {
+                return h;
+            }
+            @Override
+            public DimensionType getDimensionType() {
+                return null;
+            }
+        };
+    }
+
+    private boolean isRatioFrame(FrameProperties frame) {
+        return DimensionType.RATIO.equals(frame.getDimensionType());
     }
 
     @Override
