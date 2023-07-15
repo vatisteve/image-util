@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import io.github.vatisteve.utils.image.DimensionType;
+import io.github.vatisteve.utils.image.Measure;
 import io.github.vatisteve.utils.image.FrameProperties;
 import io.github.vatisteve.utils.image.ImageTransformer;
 import io.github.vatisteve.utils.image.MimeTypeNotSupportedException;
@@ -214,7 +214,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
      * @return  the smaller frame
      */
     private FrameProperties detectScaleUpFrame(FrameProperties frame) {
-        if (!frame.getDimensionType().equals(DimensionType.RATIO)) return frame;
+        if (!frame.getMeasure().equals(Measure.RATIO)) return frame;
         int rWidth = frame.getWidth();
         int rHeight = frame.getHeight();
         int iWidth = marvinImage.getWidth();
@@ -242,7 +242,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
                 return h;
             }
             @Override
-            public DimensionType getDimensionType() {
+            public Measure getMeasure() {
                 return null;
             }
         };
@@ -253,7 +253,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
      * @return  the bigger frame
      */
     private FrameProperties detectScaleDownFrame(FrameProperties frame) {
-        if (!frame.getDimensionType().equals(DimensionType.RATIO)) return frame;
+        if (!frame.getMeasure().equals(Measure.RATIO)) return frame;
         int rWidth = frame.getWidth();
         int rHeight = frame.getHeight();
         int iWidth = marvinImage.getWidth();
@@ -281,14 +281,14 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
                 return h;
             }
             @Override
-            public DimensionType getDimensionType() {
+            public Measure getMeasure() {
                 return null;
             }
         };
     }
 
     private boolean isRatioFrame(FrameProperties frame) {
-        return DimensionType.RATIO.equals(frame.getDimensionType());
+        return Measure.RATIO.equals(frame.getMeasure());
     }
 
     @Override

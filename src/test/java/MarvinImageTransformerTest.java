@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import io.github.vatisteve.utils.image.DimensionType;
+import io.github.vatisteve.utils.image.Measure;
 import io.github.vatisteve.utils.image.FrameProperties;
 import io.github.vatisteve.utils.image.ImageTransformer;
 import io.github.vatisteve.utils.image.ImageTransformerFactory;
@@ -28,8 +28,8 @@ public class MarvinImageTransformerTest {
                     return 600;
                 }
                 @Override
-                public DimensionType getDimensionType() {
-                    return DimensionType.PIXEL;
+                public Measure getMeasure() {
+                    return Measure.PIXEL;
                 }
             };
             ImageIO.write(ImageIO.read(
@@ -51,8 +51,8 @@ public class MarvinImageTransformerTest {
                     return 1;
                 }
                 @Override
-                public DimensionType getDimensionType() {
-                    return DimensionType.RATIO;
+                public Measure getMeasure() {
+                    return Measure.RATIO;
                 }
             };
             ImageIO.write(ImageIO.read(
