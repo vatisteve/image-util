@@ -292,7 +292,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         // ...
     }
 

@@ -15,7 +15,7 @@ import io.github.vatisteve.utils.image.MimeTypeNotSupportedException;
 
 public class MarvinImageTransformerTest {
 
-    public static void main(String[] args) throws MimeTypeNotSupportedException, IOException, Exception {
+    public static void main(String[] args) throws MimeTypeNotSupportedException, IOException {
         InputStream in1 = new FileInputStream("src/test/resources/height_longer.jpg");
         try (ImageTransformer trans = ImageTransformerFactory.buildImageTransformer(null, in1, "jpg")) {
             FrameProperties frame = new FrameProperties() {

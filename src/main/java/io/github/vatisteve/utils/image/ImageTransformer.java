@@ -2,6 +2,7 @@ package io.github.vatisteve.utils.image;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -12,7 +13,7 @@ import java.io.IOException;
  * 
  * <p>      Image transformations
  */
-public interface ImageTransformer extends AutoCloseable {
+public interface ImageTransformer extends Closeable {
 
     /**
      * @param frame      The {@link FrameProperties} with specific expected width and height after resizing
