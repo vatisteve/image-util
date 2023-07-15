@@ -8,11 +8,11 @@
 
     <groupId>io.github.vatisteve</groupId>
     <artifactId>image-util</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <name>image-util</name>
     <description>
-        The sample image util with Marvin framework
+        Easily transform uploading images tool.
     </description>
     <url>https://github.com/vatisteve/image-util</url>
 
