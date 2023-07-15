@@ -38,13 +38,13 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream resize(FrameProperties frame) throws IOException {
-        if (isRatioFrame(frame)) return toInputStream(marvinImage);
+        if (isRatioFrame(frame)) return toOutputStream(marvinImage);
         return resize(frame.getWidth(), frame.getHeight());
     }
 
     @Override
     public ByteArrayOutputStream resize(int width, int height) throws IOException {
-        return toInputStream(doResize(width, height));
+        return toOutputStream(doResize(width, height));
     }
 
     private MarvinImage doResize(int width, int height) {
@@ -62,13 +62,13 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleByWidth(FrameProperties frame) throws IOException {
-        if (isRatioFrame(frame)) return toInputStream(marvinImage);
+        if (isRatioFrame(frame)) return toOutputStream(marvinImage);
         return scaleByWidth(frame.getWidth());
     }
 
     @Override
     public ByteArrayOutputStream scaleByWidth(int width) throws IOException {
-        return toInputStream(doScaleByWidth(width));
+        return toOutputStream(doScaleByWidth(width));
     }
 
     private MarvinImage doScaleByWidth(int width) {
@@ -79,13 +79,13 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleByHeight(FrameProperties frame) throws IOException {
-        if (isRatioFrame(frame)) return toInputStream(marvinImage);
+        if (isRatioFrame(frame)) return toOutputStream(marvinImage);
         return scaleByHeight(frame.getHeight());
     }
 
     @Override
     public ByteArrayOutputStream scaleByHeight(int height) throws IOException {
-        return toInputStream(doScaleByHeight(height));
+        return toOutputStream(doScaleByHeight(height));
     }
 
     private MarvinImage doScaleByHeight(int height) {
@@ -102,7 +102,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleDown(int width, int height) throws IOException {
-        return toInputStream(doScaleDown(width, height));
+        return toOutputStream(doScaleDown(width, height));
     }
 
     private MarvinImage doScaleDown(int width, int height) {
@@ -149,7 +149,7 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
 
     @Override
     public ByteArrayOutputStream scaleUp(int width, int height) throws IOException {
-        return toInputStream(doScaleUp(width, height));
+        return toOutputStream(doScaleUp(width, height));
     }
 
     private MarvinImage doScaleUp(int width, int height) {
@@ -179,12 +179,12 @@ public class MarvinFrameworkImageTransformer implements ImageTransformer {
             MarvinPluginCollection.crop(imgOut, cropped,
                     (imgOut.getWidth() - width)/2, (imgOut.getHeight() - height)/2,
                     width, height);
-            return toInputStream(cropped);
+            return toOutputStream(cropped);
         }
-        return toInputStream(imgOut);
+        return toOutputStream(imgOut);
     }
 
-    private ByteArrayOutputStream toInputStream(MarvinImage image) throws IOException {
+    private ByteArrayOutputStream toOutputStream(MarvinImage image) throws IOException {
         return toByteArrayOutputStream(image.getBufferedImageNoAlpha());
     }
 
